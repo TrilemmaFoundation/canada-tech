@@ -66,8 +66,19 @@ A crowd-sourced repository of tech employers across Canada. Designed for both re
         import shutil
         shutil.copy2(csv_path, docs_csv_path)
         print(f"Synced {csv_path} to {docs_csv_path}")
+        
+        # Sync favicons from public to docs
+        public_dir = 'public'
+        docs_dir = 'docs'
+        if os.path.exists(public_dir):
+            for filename in os.listdir(public_dir):
+                if filename.endswith(('.png', '.ico', '.svg', '.webmanifest', '.xml')):
+                    src = os.path.join(public_dir, filename)
+                    dst = os.path.join(docs_dir, filename)
+                    shutil.copy2(src, dst)
+                    print(f"Synced {filename} to {docs_dir}")
     except Exception as e:
-        print(f"Error syncing CSV: {e}")
+        print(f"Error syncing files: {e}")
 
     print("README.md updated successfully!")
 

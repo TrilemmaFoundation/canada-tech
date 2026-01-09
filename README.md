@@ -12,13 +12,12 @@ A crowd-sourced repository of tech employers across Canada. Designed for both re
 | [TELUS Corporation](https://www.telus.com) | Telecommunications | Vancouver, BC | Hybrid | Leading communications technology company providing 5G, fiber, and digital solutions in health and agriculture. |
 | [Wealthsimple Inc.](https://www.wealthsimple.com/) | Fintech | Toronto, ON | Hybrid | The way money should be. |
 
-### 📝 How to Contribute
+## 📝 How to Contribute
 
 1. Open `companies.csv`.
 2. Add your company following the [CSV Specification](#csv-specification).
-3. Submit a Pull Request.
-
-> **Note:** The `README.md` and Interactive Map are automatically updated via GitHub Actions whenever changes are pushed to `companies.csv`.
+3. Run `python scripts/generate_readme.py` to update this list.
+4. Submit a Pull Request.
 
 ### CSV Specification
 
