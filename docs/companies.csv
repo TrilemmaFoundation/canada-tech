@@ -1,3 +1,3 @@
 id,name,url,description,industry,tags,remote_policy,city,province,lat,lng
 wealthsimple-toronto,Wealthsimple Inc.,https://www.wealthsimple.com/,"The way money should be.",Fintech,"investing, stocks, crypto",Hybrid,Toronto,ON,43.64605,-79.39558
-telus-vancouver,TELUS Corporation,https://www.telus.com,,SaaS,,Hybrid,Vancouver,BC,49.281111,-123.117111
+telus-vancouver,TELUS Corporation,https://www.telus.com,"Leading communications technology company providing 5G, fiber, and digital solutions in health and agriculture.",Telecommunications,"5G, PureFibre, HealthTech, AgTech, SaaS",Hybrid,Vancouver,BC,49.281111,-123.117111
