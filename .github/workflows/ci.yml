@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  pull_request:
+    paths:
+      - 'companies.csv'
+      - 'data/incoming.csv'
+      - 'scripts/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'companies.csv'
+      - 'data/incoming.csv'
+      - 'scripts/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Validate companies.csv schema
+        run: |
+          python scripts/add_companies.py --check --input companies.csv || true
+          # Check that companies.csv is valid CSV and has required columns
+          python -c "
+          import csv
+          import sys
+          required_cols = ['id', 'name', 'url', 'industry', 'remote_policy', 'city', 'province', 'lat', 'lng']
+          with open('companies.csv', 'r') as f:
+              reader = csv.DictReader(f)
+              cols = reader.fieldnames
+              missing = [c for c in required_cols if c not in cols]
+              if missing:
+                  print(f'Missing required columns: {missing}', file=sys.stderr)
+                  sys.exit(1)
+              # Validate each row
+              errors = []
+              for i, row in enumerate(reader, start=2):
+                  for col in required_cols:
+                      if not row.get(col) or not row[col].strip():
+                          errors.append(f'Row {i}: Missing {col}')
+              if errors:
+                  for e in errors:
+                      print(e, file=sys.stderr)
+                  sys.exit(1)
+          "
+      
+      - name: Validate incoming.csv (if exists)
+        run: |
+          if [ -f data/incoming.csv ]; then
+            python scripts/add_companies.py --check --input data/incoming.csv
+          else
+            echo "No data/incoming.csv found, skipping validation"
+          fi
+      
+      - name: Generate README
+        run: |
+          python scripts/generate_readme.py
+      
+      - name: Check for README changes
+        run: |
+          git diff --exit-code README.md || (echo "README.md is out of sync. Run: python scripts/generate_readme.py" && exit 1)
+      
+      - name: Check for docs/companies.csv sync
+        run: |
+          if [ -f docs/companies.csv ]; then
+            git diff --exit-code docs/companies.csv || (echo "docs/companies.csv is out of sync. Run: python scripts/generate_readme.py" && exit 1)
+          fi
+

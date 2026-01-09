@@ -204,6 +204,18 @@
             text-decoration: underline;
         }
 
+        /* Province Tooltip */
+        .province-tooltip {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             body {
@@ -301,9 +313,27 @@
             maxZoom: 20
         }).addTo(map);
 
+        // Province color mapping
+        const provinceColors = {
+            'AB': '#FF6B6B', // Red
+            'BC': '#4ECDC4', // Teal
+            'MB': '#95E1D3', // Mint
+            'NB': '#F38181', // Coral
+            'NL': '#AA96DA', // Purple
+            'NS': '#FCBAD3', // Pink
+            'NT': '#FFD93D', // Yellow
+            'NU': '#6BCB77', // Green
+            'ON': '#4D96FF', // Blue
+            'PE': '#FF9F43', // Orange
+            'QC': '#A8E6CF', // Light Green
+            'SK': '#FFD89B', // Peach
+            'YT': '#C7CEEA'  // Lavender
+        };
+
         // State
         let allCompanies = [];
         let markers = L.layerGroup().addTo(map);
+        let provinceLayer = null;
         let filters = {
             search: '',
             industry: '',
@@ -318,8 +348,126 @@
         const policyContainer = document.getElementById('policy-filters');
         const statsDiv = document.getElementById('stats');
 
+        // Load Province Boundaries
+        async function loadProvinceBoundaries() {
+            // Try multiple GeoJSON sources
+            const sources = [
+                'https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/canada.geojson',
+                'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/canada.geojson'
+            ];
+            
+            for (const sourceUrl of sources) {
+                try {
+                    const response = await fetch(sourceUrl);
+                    
+                    if (!response.ok) {
+                        continue; // Try next source
+                    }
+                    
+                    const geojson = await response.json();
+                    
+                    provinceLayer = L.geoJSON(geojson, {
+                        style: function(feature) {
+                            // Get province code/name from feature properties (try multiple common property names)
+                            const props = feature.properties || {};
+                            const provName = (props.name || props.NAME || props.PRENAME || props.province || '').toString();
+                            const provCode = (props.code || props.CODE || props.PRUID || '').toString();
+                            
+                            // Try to match province code
+                            let color = '#E0E0E0'; // Default gray
+                            
+                            // First try direct code match
+                            if (provCode && provinceColors[provCode.toUpperCase()]) {
+                                color = provinceColors[provCode.toUpperCase()];
+                            } else {
+                                // Try matching by name
+                                const upperName = provName.toUpperCase();
+                                for (const [code, provColor] of Object.entries(provinceColors)) {
+                                    const fullName = getProvinceName(code).toUpperCase();
+                                    if (upperName.includes(code) || upperName.includes(fullName) || 
+                                        fullName.includes(upperName) || upperName.includes(code)) {
+                                        color = provColor;
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            return {
+                                fillColor: color,
+                                fillOpacity: 0.25,
+                                color: '#888',
+                                weight: 1.5,
+                                opacity: 0.7
+                            };
+                        },
+                        onEachFeature: function(feature, layer) {
+                            const props = feature.properties || {};
+                            const provName = props.name || props.NAME || 'Province';
+                            
+                            // Add tooltip
+                            layer.bindTooltip(provName, {
+                                permanent: false,
+                                direction: 'center',
+                                className: 'province-tooltip'
+                            });
+                            
+                            // Add hover effect
+                            layer.on({
+                                mouseover: function(e) {
+                                    const layer = e.target;
+                                    layer.setStyle({
+                                        fillOpacity: 0.5,
+                                        weight: 2.5,
+                                        color: '#333'
+                                    });
+                                },
+                                mouseout: function(e) {
+                                    if (provinceLayer) {
+                                        provinceLayer.resetStyle(e.target);
+                                    }
+                                }
+                            });
+                        }
+                    }).addTo(map);
+                    
+                    // Markers are already added to map, so they'll appear on top
+                    // No need to call bringToFront - Leaflet handles z-index automatically
+                    return; // Success, exit function
+                } catch (err) {
+                    console.warn(`Failed to load province boundaries from ${sourceUrl}:`, err);
+                    continue; // Try next source
+                }
+            }
+            
+            // If all sources failed, just log a warning - map will still work without province boundaries
+            console.warn("Could not load province boundaries from any source. Map will work without province coloring.");
+        }
+        
+        // Helper function to get province name from code
+        function getProvinceName(code) {
+            const names = {
+                'AB': 'Alberta',
+                'BC': 'British Columbia',
+                'MB': 'Manitoba',
+                'NB': 'New Brunswick',
+                'NL': 'Newfoundland',
+                'NS': 'Nova Scotia',
+                'NT': 'Northwest Territories',
+                'NU': 'Nunavut',
+                'ON': 'Ontario',
+                'PE': 'Prince Edward Island',
+                'QC': 'Quebec',
+                'SK': 'Saskatchewan',
+                'YT': 'Yukon'
+            };
+            return names[code] || '';
+        }
+
         // Fetch and Initialize Data
         async function init() {
+            // Load province boundaries first
+            await loadProvinceBoundaries();
+            
             try {
                 const response = await fetch(`companies.csv?v=${Date.now()}`);
                 const text = await response.text();
@@ -430,11 +578,14 @@
             // Update Stats
             statsDiv.textContent = `${filtered.length} Companies`;
 
-            // Draw Markers
+            // Draw Markers with province-based colors
             filtered.forEach(company => {
+                // Use province color for marker, fallback to primary blue
+                const markerColor = provinceColors[company.province] || '#2563eb';
+                
                 L.circleMarker([company.lat, company.lng], {
                     radius: 8,
-                    fillColor: '#2563eb', // Primary color
+                    fillColor: markerColor,
                     color: '#fff',
                     weight: 2,
                     opacity: 1,
@@ -449,6 +600,9 @@
                     <a href="${company.url}" target="_blank" class="popup-link">Visit Website &rarr;</a>
                 `);
             });
+            
+            // Markers are added after province layer, so they automatically appear on top
+            // Leaflet handles z-index based on layer order
         }
 
         // Start
