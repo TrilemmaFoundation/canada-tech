@@ -8,5 +8,11 @@
     },
     "keywords": [],
     "author": "",
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {
+        "leaflet": "^1.9.4"
+    },
+    "devDependencies": {
+        "serve": "^14.2.5"
+    }
 }
