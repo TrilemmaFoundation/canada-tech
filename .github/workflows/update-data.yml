@@ -1,0 +1,29 @@
+name: Update README and Map Data
+
+on:
+  push:
+    paths:
+      - 'companies.csv'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Run generation script
+        run: python scripts/generate_readme.py
+
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: auto-update readme and map data [skip ci]"
+          file_pattern: 'README.md docs/companies.csv'

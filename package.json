@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "A repository of tech employers across Canada.",
     "scripts": {
-        "generate": "python3 scripts/generate_readme.py && cp companies.csv docs/",
+        "generate": "python3 scripts/generate_readme.py",
         "dev": "npm run generate && npx serve docs"
     },
     "keywords": [],

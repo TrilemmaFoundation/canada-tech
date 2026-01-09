@@ -60,6 +60,15 @@ A crowd-sourced repository of tech employers across Canada. Designed for both re
     with open(readme_path, 'w', encoding='utf-8') as f:
         f.write(markdown_content)
     
+    # Sync CSV to docs folder for Github Pages map
+    docs_csv_path = os.path.join('docs', 'companies.csv')
+    try:
+        import shutil
+        shutil.copy2(csv_path, docs_csv_path)
+        print(f"Synced {csv_path} to {docs_csv_path}")
+    except Exception as e:
+        print(f"Error syncing CSV: {e}")
+
     print("README.md updated successfully!")
 
 if __name__ == "__main__":
