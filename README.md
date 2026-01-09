@@ -1,2 +1,3 @@
-# canada-tech
-A list of tech employers based in Canada
+# Canada Tech
+
+A list of tech employers based in Canada.
