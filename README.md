@@ -9,6 +9,7 @@ A crowd-sourced repository of tech employers across Canada. Designed for both re
 
 | Name | Industry | Location | Remote Policy | Description |
 | --- | --- | --- | --- | --- |
+| [TELUS Corporation](https://www.telus.com) | SaaS | Vancouver, BC | Hybrid |  |
 | [Wealthsimple Inc.](https://www.wealthsimple.com/) | Fintech | Toronto, ON | Hybrid | The way money should be. |
 
 ## 📝 How to Contribute

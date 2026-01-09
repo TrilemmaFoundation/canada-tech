@@ -4,88 +4,450 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canada Tech Map</title>
+    <title>Canada Tech Ecosystem Map</title>
+
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --sidebar-width: 320px;
+            --primary-color: #2563eb;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --bg-secondary: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        #map {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-primary);
             height: 100vh;
-            width: 100vw;
+            display: flex;
+            overflow: hidden;
         }
 
-        .info-panel {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+        /* Sidebar Syles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: white;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header p {
+            margin: 0.5rem 0 0 0;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .filters {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* Inputs & Controls */
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 0.625rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            background: white;
+            transition: border-color 0.15s;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .checkbox-item input {
+            accent-color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .stats-bar {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Map Styles */
+        #map {
+            flex: 1;
+            background: #f0f0f0;
+        }
+
+        /* Custom Popup Styles */
+        .leaflet-popup-content-wrapper {
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            max-width: 300px;
-            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .leaflet-popup-content {
+            margin: 16px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .popup-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 4px;
+            display: block;
+            color: var(--text-primary);
+        }
+
+        .popup-meta {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .popup-link {
+            display: inline-block;
+            margin-top: 8px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .popup-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: 40vh;
+                order: 2;
+            }
+
+            #map {
+                height: 60vh;
+                order: 1;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="info-panel">
-        <h1>Canada Tech 🇨🇦</h1>
-        <p>Exploring the tech landscape across Canada.</p>
-        <div id="stats">Loading data...</div>
-    </div>
+
+    <aside class="sidebar">
+        <div class="header">
+            <h1>🇨🇦 Canada Tech</h1>
+            <p>Discover tech companies, startups, and hubs across the country.</p>
+        </div>
+
+        <div class="stats-bar" id="stats">
+            Loading...
+        </div>
+
+        <div class="filters">
+            <!-- Search -->
+            <div class="filter-group">
+                <label class="filter-label">Search</label>
+                <input type="text" id="search-input" placeholder="Company name or keyword...">
+            </div>
+
+            <!-- Industry -->
+            <div class="filter-group">
+                <label class="filter-label">Industry</label>
+                <select id="industry-select">
+                    <option value="">All Industries</option>
+                    <!-- Populated via JS -->
+                </select>
+            </div>
+
+            <!-- Remote Policy -->
+            <div class="filter-group">
+                <label class="filter-label">Remote Policy</label>
+                <div class="checkbox-group" id="policy-filters">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+            <!-- Province -->
+            <div class="filter-group">
+                <label class="filter-label">Province</label>
+                <select id="province-select">
+                    <option value="">All Provinces</option>
+                    <!-- Populated via JS -->
+                </select>
+            </div>
+        </div>
+
+        <div class="footer">
+            Data sourced from community contributions.
+        </div>
+    </aside>
+
     <div id="map"></div>
 
+    <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-    <script>
-        const map = L.map('map').setView([56.1304, -106.3468], 4);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap'
+    <script>
+        // Initialize Map
+        // Centered roughly on Canada
+        const map = L.map('map', {
+            zoomControl: false
+        }).setView([56.1304, -106.3468], 4);
+
+        // Move zoom control to top-right
+        L.control.zoom({
+            position: 'topright'
         }).addTo(map);
 
-        async function loadCompanies() {
-            try {
-                // Fetch CSV from the same directory
-                const response = await fetch('companies.csv');
-                const csvData = await response.text();
+        // CartoDB Positron Tiles (Clean, Light)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
 
-                Papa.parse(csvData, {
+        // State
+        let allCompanies = [];
+        let markers = L.layerGroup().addTo(map);
+        let filters = {
+            search: '',
+            industry: '',
+            province: '',
+            policies: [] // Set of checked policies
+        };
+
+        // DOM Elements
+        const searchInput = document.getElementById('search-input');
+        const industrySelect = document.getElementById('industry-select');
+        const provinceSelect = document.getElementById('province-select');
+        const policyContainer = document.getElementById('policy-filters');
+        const statsDiv = document.getElementById('stats');
+
+        // Fetch and Initialize Data
+        async function init() {
+            try {
+                const response = await fetch('companies.csv');
+                const text = await response.text();
+
+                Papa.parse(text, {
                     header: true,
                     dynamicTyping: true,
+                    skipEmptyLines: true,
                     complete: function (results) {
-                        const companies = results.data.filter(c => c.id);
-                        document.getElementById('stats').innerText = `${companies.length} companies listed.`;
-
-                        companies.forEach(company => {
-                            if (company.lat && company.lng) {
-                                L.marker([company.lat, company.lng])
-                                    .addTo(map)
-                                    .bindPopup(`
-                                        <strong>${company.name}</strong><br>
-                                        ${company.industry} | ${company.remote_policy}<br>
-                                        <small>${company.city}, ${company.province}</small><br>
-                                        <a href="${company.url}" target="_blank">Website</a>
-                                    `);
-                            }
-                        });
+                        allCompanies = results.data.filter(c => c.id && c.lat && c.lng);
+                        setupFilters();
+                        renderMarkers();
                     }
                 });
-            } catch (error) {
-                console.error('Error loading CSV:', error);
-                document.getElementById('stats').innerText = "Failed to load company data.";
+            } catch (err) {
+                console.error("Failed to load data", err);
+                statsDiv.textContent = "Error loading data.";
             }
         }
 
-        loadCompanies();
+        // Setup Dynmaic Filters based on data
+        function setupFilters() {
+            // Get unique Industries
+            const industries = [...new Set(allCompanies.map(c => c.industry).filter(Boolean))].sort();
+            industries.forEach(ind => {
+                const option = document.createElement('option');
+                option.value = ind;
+                option.textContent = ind;
+                industrySelect.appendChild(option);
+            });
+
+            // Get unique Provinces
+            const provinces = [...new Set(allCompanies.map(c => c.province).filter(Boolean))].sort();
+            provinces.forEach(prov => {
+                const option = document.createElement('option');
+                option.value = prov;
+                option.textContent = prov;
+                provinceSelect.appendChild(option);
+            });
+
+            // Get unique Remote Policies
+            const policies = [...new Set(allCompanies.map(c => c.remote_policy).filter(Boolean))].sort();
+            // Default select all policies
+            filters.policies = [...policies];
+
+            policies.forEach(policy => {
+                const label = document.createElement('label');
+                label.className = 'checkbox-item';
+
+                const input = document.createElement('input');
+                input.type = 'checkbox';
+                input.value = policy;
+                input.checked = true;
+
+                // Add event listener
+                input.addEventListener('change', (e) => {
+                    const val = e.target.value;
+                    if (e.target.checked) {
+                        filters.policies.push(val);
+                    } else {
+                        filters.policies = filters.policies.filter(p => p !== val);
+                    }
+                    renderMarkers();
+                });
+
+                label.appendChild(input);
+                label.appendChild(document.createTextNode(policy));
+                policyContainer.appendChild(label);
+            });
+
+            // Add other listeners
+            searchInput.addEventListener('input', (e) => {
+                filters.search = e.target.value.toLowerCase();
+                renderMarkers();
+            });
+
+            industrySelect.addEventListener('change', (e) => {
+                filters.industry = e.target.value;
+                renderMarkers();
+            });
+
+            provinceSelect.addEventListener('change', (e) => {
+                filters.province = e.target.value;
+                renderMarkers();
+            });
+        }
+
+        // Main Render Logic
+        function renderMarkers() {
+            markers.clearLayers();
+
+            const filtered = allCompanies.filter(company => {
+                // Search Filter (Name or Description)
+                const searchMatch = !filters.search ||
+                    (company.name && company.name.toLowerCase().includes(filters.search)) ||
+                    (company.description && company.description.toLowerCase().includes(filters.search));
+
+                // Dropdown Filters
+                const industryMatch = !filters.industry || company.industry === filters.industry;
+                const provinceMatch = !filters.province || company.province === filters.province;
+
+                // Checkbox Filter
+                const policyMatch = filters.policies.includes(company.remote_policy);
+
+                return searchMatch && industryMatch && provinceMatch && policyMatch;
+            });
+
+            // Update Stats
+            statsDiv.textContent = `${filtered.length} Companies`;
+
+            // Draw Markers
+            filtered.forEach(company => {
+                L.circleMarker([company.lat, company.lng], {
+                    radius: 8,
+                    fillColor: '#2563eb', // Primary color
+                    color: '#fff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                })
+                    .addTo(markers)
+                    .bindPopup(`
+                    <span class="popup-title">${company.name}</span>
+                    <span class="popup-meta">${company.industry} • ${company.city}, ${company.province}</span>
+                    <span class="popup-meta">${company.remote_policy}</span>
+                    <p style="margin: 8px 0; font-size: 0.9em; line-height: 1.4;">${company.description || ''}</p>
+                    <a href="${company.url}" target="_blank" class="popup-link">Visit Website &rarr;</a>
+                `);
+            });
+        }
+
+        // Start
+        init();
+
     </script>
 </body>
 
