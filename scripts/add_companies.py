@@ -251,6 +251,7 @@ def process_incoming_companies(input_path: Optional[str] = None, check_only: boo
     """
     errors = []
     incoming_companies = []
+    reading_from_file = False
     
     # Read input
     if input_path:
@@ -258,12 +259,15 @@ def process_incoming_companies(input_path: Optional[str] = None, check_only: boo
             errors.append(f"Input file not found: {input_path}")
             return [], errors
         input_file = open(input_path, 'r', encoding='utf-8')
+        reading_from_file = True
     else:
         # Try data/incoming.csv, fallback to stdin
         if os.path.exists('data/incoming.csv'):
             input_file = open('data/incoming.csv', 'r', encoding='utf-8')
+            reading_from_file = True
         else:
             input_file = sys.stdin
+            reading_from_file = False
     
     try:
         reader = csv.DictReader(input_file)
@@ -281,7 +285,9 @@ def process_incoming_companies(input_path: Optional[str] = None, check_only: boo
         if input_file != sys.stdin:
             input_file.close()
     
-    if not incoming_companies:
+    # If reading from a file and no companies found, that's okay (empty file)
+    # But if reading from stdin and no companies found, that's an error
+    if not incoming_companies and not reading_from_file:
         errors.append("No companies found in input")
         return [], errors
     
