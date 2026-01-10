@@ -1,3 +1,13 @@
 id,name,url,description,industry,tags,remote_policy,city,province,lat,lng
-wealthsimple-toronto,Wealthsimple Inc.,https://www.wealthsimple.com/,"The way money should be.",Fintech,"investing, stocks, crypto",Hybrid,Toronto,ON,43.64605,-79.39558
+clio-vancouver,Clio,https://www.clio.com,Cloud legal practice management software.,SaaS,legaltech,Hybrid,Vancouver,BC,49.2608724,-123.113952
+dapper-labs-vancouver,Dapper Labs,https://www.dapperlabs.com,Blockchain-based consumer products and digital collectibles.,Gaming,web3,Remote,Vancouver,BC,49.2608724,-123.113952
+geocomply-vancouver,GeoComply,https://www.geocomply.com,Geolocation compliance and fraud prevention.,Fintech,risk,Hybrid,Vancouver,BC,49.2608724,-123.113952
+hootsuite-vancouver,Hootsuite,https://www.hootsuite.com,Social media management platform.,SaaS,social-media,Hybrid,Vancouver,BC,49.2608724,-123.113952
+indochino-vancouver,Indochino,https://www.indochino.com,Made-to-measure apparel ecommerce brand.,Ecommerce,fashion,Hybrid,Vancouver,BC,49.2608724,-123.113952
+later-vancouver,Later,https://later.com,Social media management and influencer marketing platform.,SaaS,marketing,Hybrid,Vancouver,BC,49.2608724,-123.113952
+semios-vancouver,Semios,https://semios.com,Agtech platform for precision agriculture and sustainability.,Cleantech,agtech,Hybrid,Vancouver,BC,49.2608724,-123.113952
 telus-vancouver,TELUS Corporation,https://www.telus.com,"Leading communications technology company providing 5G, fiber, and digital solutions in health and agriculture.",Telecommunications,"5G, PureFibre, HealthTech, AgTech, SaaS",Hybrid,Vancouver,BC,49.281111,-123.117111
+thinkific-vancouver,Thinkific,https://www.thinkific.com,Learning commerce platform for courses and communities.,SaaS,edtech,Hybrid,Vancouver,BC,49.2608724,-123.113952
+trulioo-vancouver,Trulioo,https://www.trulioo.com,Digital identity verification (KYC/KYB) platform.,Fintech,identity-verification,Hybrid,Vancouver,BC,49.2608724,-123.113952
+visier-vancouver,Visier,https://www.visier.com,People analytics platform for workforce insights.,AI,people-analytics,Hybrid,Vancouver,BC,49.2608724,-123.113952
+wealthsimple-toronto,Wealthsimple Inc.,https://www.wealthsimple.com/,The way money should be.,Fintech,"investing, stocks, crypto",Hybrid,Toronto,ON,43.64605,-79.39558

@@ -9,7 +9,17 @@ A crowd-sourced repository of tech employers across Canada. Designed for both re
 
 | Name | Industry | Location | Remote Policy | Description |
 | --- | --- | --- | --- | --- |
+| [Clio](https://www.clio.com) | SaaS | Vancouver, BC | Hybrid | Cloud legal practice management software. |
+| [Dapper Labs](https://www.dapperlabs.com) | Gaming | Vancouver, BC | Remote | Blockchain-based consumer products and digital collectibles. |
+| [GeoComply](https://www.geocomply.com) | Fintech | Vancouver, BC | Hybrid | Geolocation compliance and fraud prevention. |
+| [Hootsuite](https://www.hootsuite.com) | SaaS | Vancouver, BC | Hybrid | Social media management platform. |
+| [Indochino](https://www.indochino.com) | Ecommerce | Vancouver, BC | Hybrid | Made-to-measure apparel ecommerce brand. |
+| [Later](https://later.com) | SaaS | Vancouver, BC | Hybrid | Social media management and influencer marketing platform. |
+| [Semios](https://semios.com) | Cleantech | Vancouver, BC | Hybrid | Agtech platform for precision agriculture and sustainability. |
 | [TELUS Corporation](https://www.telus.com) | Telecommunications | Vancouver, BC | Hybrid | Leading communications technology company providing 5G, fiber, and digital solutions in health and agriculture. |
+| [Thinkific](https://www.thinkific.com) | SaaS | Vancouver, BC | Hybrid | Learning commerce platform for courses and communities. |
+| [Trulioo](https://www.trulioo.com) | Fintech | Vancouver, BC | Hybrid | Digital identity verification (KYC/KYB) platform. |
+| [Visier](https://www.visier.com) | AI | Vancouver, BC | Hybrid | People analytics platform for workforce insights. |
 | [Wealthsimple Inc.](https://www.wealthsimple.com/) | Fintech | Toronto, ON | Hybrid | The way money should be. |
 
 ## 📝 How to Contribute

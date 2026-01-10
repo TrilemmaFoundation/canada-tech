@@ -1,1 +1,11 @@
-name,url,industry,remote_policy,city,province,hq_address
+name,url,industry,remote_policy,city,province,description,tags,hq_address
+Hootsuite,https://www.hootsuite.com,SaaS,Hybrid,Vancouver,BC,Social media management platform.,social-media,
+Thinkific,https://www.thinkific.com,SaaS,Hybrid,Vancouver,BC,Learning commerce platform for courses and communities.,edtech,
+Trulioo,https://www.trulioo.com,Fintech,Hybrid,Vancouver,BC,Digital identity verification (KYC/KYB) platform.,identity-verification,
+GeoComply,https://www.geocomply.com,Fintech,Hybrid,Vancouver,BC,Geolocation compliance and fraud prevention.,risk,
+Visier,https://www.visier.com,AI,Hybrid,Vancouver,BC,People analytics platform for workforce insights.,people-analytics,
+Later,https://later.com,SaaS,Hybrid,Vancouver,BC,Social media management and influencer marketing platform.,marketing,
+Clio,https://www.clio.com,SaaS,Hybrid,Vancouver,BC,Cloud legal practice management software.,legaltech,
+Dapper Labs,https://www.dapperlabs.com,Gaming,Remote,Vancouver,BC,Blockchain-based consumer products and digital collectibles.,web3,
+Semios,https://semios.com,Cleantech,Hybrid,Vancouver,BC,Agtech platform for precision agriculture and sustainability.,agtech,
+Indochino,https://www.indochino.com,Ecommerce,Hybrid,Vancouver,BC,Made-to-measure apparel ecommerce brand.,fashion,
